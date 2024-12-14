@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 200px; /* Space between the boxes */
+        }
+        .container {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            max-width: 600px;
+            text-align: center;
+        }
+        .left-box, .right-box {
+            background-color: hsl(256, 33%, 84%);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 15%; /* Rectangular shape */
+            max-width: 200px;
+            height: 900px; /* Adjust height to content */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .button {
+            padding: 30px 30px;
+            background-color: #333;
+            color: wheat;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="left-box">
+            <p>The decentralized traffic management system uses IoT sensors and cameras to collect real-time traffic data, which is shared on a secure blockchain network. Smart contracts analyze this data to autonomously adjust traffic signal timings, reducing congestion and improving travel times. Ensures transparency and data security while optimizing traffic flow and minimizing human intervention in traffic management.</p>
+        </div>
+        <div class="container">
+            <h1>Traffic Management System</h1>
+            <div id="traffic_data"></div>
+            <button class="button" onclick="fetchData()">Fetch Traffic Data</button>
+            <button class="button" onclick="adjustSignals()">Adjust Signal Timings</button>
+        </div>
+        <div class="right-box">
+            <p>The system offers several benefits, including improved traffic flow through optimized signal timings, increased transparency and accountability via blockchain-based data sharing, and enhanced security against cyber attacks. Additionally, the automation of traffic management decisions reduces the need for human intervention, leading to more efficient and reliable traffic control.</p>
+        </div>
+    </div>
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/get_traffic_data');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+                const dataDiv = document.getElementById('traffic_data');
+                dataDiv.innerHTML = ''; // Clear previous data
+
+                if (data.length === 0) {
+                    dataDiv.innerHTML = '<p>No traffic data available.</p>';
+                } else {
+                    data.forEach(record => {
+                        const recordElement = document.createElement('div');
+                        recordElement.innerHTML = `
+                            <p><strong>Timestamp:</strong> ${new Date(record.timestamp * 1000).toLocaleString()}</p>
+                            <p><strong>Traffic Volume:</strong> ${record.trafficVolume}</p>
+                            <p><strong>Speed:</strong> ${record.speed} km/h</p>
+                            <p><strong>Congestion Level:</strong> ${record.congestionLevel}%</p>
+                            <hr>
+                        `;
+                        dataDiv.appendChild(recordElement);
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch traffic data. Please try again.');
+            }
+        }
+
+        async function adjustSignals() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/adjust_signal_timings');
+                if (!response.ok) {
+                    throw new Error('Failed to adjust signals');
+                }
+                const adjustment = await response.json();
+                alert(`Signal Adjustment: ${adjustment.adjustment}`);
+                adjustSignals.innerHTML = '';
+
+                if (adjustment.length ===0)
+                {
+                    adjustSignals.innerHTML='<p>ho gya!!!!.</p>'
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to adjust signal timings. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
